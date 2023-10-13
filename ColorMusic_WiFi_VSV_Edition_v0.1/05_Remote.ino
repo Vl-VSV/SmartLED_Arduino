@@ -1,0 +1,63 @@
+#if IR_REMOTE
+void remoteTick() {
+  if (IRLremote.available()) {
+    auto data = IRLremote.read();
+    IRdata = data.command;
+
+    RemoteFunc(IRdata);
+  }
+}
+#endif
+
+#if IR_REMOTE
+void RemoteFunc(uint32_t IRdata) {
+  byte last_mode = led_control_data.mode;
+  byte last_submode = led_control_data.submode;
+
+  switch (IRdata) {
+    case BUTT_UP:
+      switch (last_mode) {
+        case 1: led_control_data.settings[1] = smartIncr(led_control_data.settings[1], REMOTE_STEP, 0, 255); break;
+      }
+      break;
+
+    case BUTT_DOWN:
+      switch (last_mode) {
+        case 1: led_control_data.settings[1] = smartIncr(led_control_data.settings[1], -REMOTE_STEP, 0, 255); break;
+      }
+      break;
+
+    case BUTT_RIGHT:
+      switch (last_mode) {
+        case 1:
+          switch (last_submode) {
+            case 1: led_control_data.WHITE_TEMP = smartIncr(led_control_data.WHITE_TEMP, 15, 0, 180); break;
+            case 2: led_control_data.LIGHT_COLOR = led_control_data.LIGHT_COLOR + 8; break;
+            case 3: led_control_data.EFFECT_DELAY = smartIncr(led_control_data.EFFECT_DELAY, 10, 80, 255); break;
+          }
+          break;
+      }
+      break;
+
+    case BUTT_LEFT:
+      switch (last_mode) {
+        case 1:
+          switch (last_submode) {
+            case 1: led_control_data.WHITE_TEMP = smartIncr(led_control_data.WHITE_TEMP, -15, 0, 180); break;
+            case 2: led_control_data.LIGHT_COLOR = led_control_data.LIGHT_COLOR - 8; break;
+            case 3: led_control_data.EFFECT_DELAY = smartIncr(led_control_data.EFFECT_DELAY, -10, 80, 255); break;
+          }
+          break;
+      }
+      break;
+
+    case BUTT_HASH:
+      led_control_data.submode = smartIncr(last_submode, 1, 1, led_control_data.maxSubmode[last_mode - 1]);
+      break;
+
+    case BUTT_STAR:
+      led_control_data.submode = smartIncr(last_submode, -1, 1, led_control_data.maxSubmode[last_mode - 1]);
+      break;
+  }
+}
+#endif
