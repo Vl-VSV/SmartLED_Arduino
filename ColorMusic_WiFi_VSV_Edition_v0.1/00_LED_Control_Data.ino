@@ -10,4 +10,4 @@ struct LEDControlData {
   byte minBright = 0;
 
   byte settings[2] = {90, 255};
-};2
+};

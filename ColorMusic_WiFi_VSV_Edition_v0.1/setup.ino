@@ -27,5 +27,9 @@ void setup() {
   connectWifi();
 #endif
 
+#if USE_WEMOS
+  Serial.begin(115200);
+#else
   Serial.begin(9600);
+#endif
 }

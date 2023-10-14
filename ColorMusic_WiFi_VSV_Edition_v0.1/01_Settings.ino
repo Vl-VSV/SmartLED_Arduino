@@ -18,7 +18,7 @@
 #if (USE_WEMOS && NET_REMOTE)
 const char* ssid = "Davidoff";
 const char* password = "Nata1426_Nata";
-const char* server = "";
+String server = "https://smartled.onrender.com/getData";
 #endif
 // =====================================================================================================================================================
 
@@ -38,10 +38,13 @@ byte SPEKTR_LOW_PASS = 50;   // Нижний порог шумов режим с
 
 // ============================== Пины =================================================================================================================
 
+#if !USE_WEMOS
 #define LED_PIN 12  // Пин DI светодиодной ленты
 #define BTN_PIN 3   // Пин кнопки для управления
 #define IR_PIN 2    // Пин ИК приёмника
-
+#else
+#define LED_PIN 2  // Пин DI светодиодной ленты
+#endif
 
 #if USE_WEMOS
 #define SOUND_MIC A0  // Пин микрофона на wemos mini
@@ -97,7 +100,10 @@ volatile uint32_t IRdata;  // Переменная для ИК команд
 
 #if (USE_WEMOS && NET_REMOTE)
 #include <ESP8266WiFi.h>
+#include <WiFiClient.h>
 #include <ESP8266HTTPClient.h>
+#include <ArduinoJson.h>
+StaticJsonDocument<128> jsonDoc; // Создаем объект JSON-документа
 #endif
 // ---------------- Объявление переменных ---------------------------------------------------------------
 LEDControlData led_control_data;

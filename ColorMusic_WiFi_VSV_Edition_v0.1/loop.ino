@@ -4,6 +4,10 @@ void loop() {
   remoteTick();
 #endif
 
+#if NET_REMOTE
+  networkTick();
+#endif
+
   if (timer_int(0, MAIN_LOOP)) {
     animation();
 
