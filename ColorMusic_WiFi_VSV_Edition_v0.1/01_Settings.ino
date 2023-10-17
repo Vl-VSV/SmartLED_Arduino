@@ -1,15 +1,15 @@
 // ============================== ОБЯЗАТЕЛЬНЫЕ НАСТРОЙКИ ==============================================================================================
 
-#define USE_WEMOS 1  // Использование Wemos mini
+#define USE_WEMOS 0  // Использование Wemos mini
 
 // Лента
 #define NUM_LEDS 226  // Количество светодиодов
 #define CURRENT_LIMIT 0
 
 // Управление
-#define IR_REMOTE 0  // ИК управление. 1 - включено, 0 - отключено
+#define IR_REMOTE 1  // ИК управление. 1 - включено, 0 - отключено
 
-#define NET_REMOTE 1    // Управление через сервер. 1 - включено, 0 - отключено
+#define NET_REMOTE 0    // Управление через сервер. 1 - включено, 0 - отключено
 #define NET_DELAY 3000  // Задержка между запросами на сервер
 
 // Автонастройка нижнего порога шумов
@@ -38,12 +38,12 @@ byte SPEKTR_LOW_PASS = 50;   // Нижний порог шумов режим с
 
 // ============================== Пины =================================================================================================================
 
-#if !USE_WEMOS
+#if USE_WEMOS
+#define LED_PIN 2  // Пин DI светодиодной ленты
+#else
 #define LED_PIN 12  // Пин DI светодиодной ленты
 #define BTN_PIN 3   // Пин кнопки для управления
 #define IR_PIN 2    // Пин ИК приёмника
-#else
-#define LED_PIN 2  // Пин DI светодиодной ленты
 #endif
 
 #if USE_WEMOS
@@ -112,16 +112,37 @@ LEDControlData led_control_data;
 #define HUE_ORANGE 32
 #define HUE_BLUE 160
 
+#define EMPTY_COLOR HUE_PURPLE
+byte EMPTY_BRIGHT = 40;
+
+const TProgmemRGBPalette16 myPal PROGMEM = {
+  0x00FF00, 0x00FF00, 0x6fff00, 0x9eff00,
+  0xc3ff00, 0xe3ff00, 0xffff00, 0xffe000,
+  0xffc000, 0xff9f00, 0xff7b00, 0xff5200,
+  0xff0000, 0xff0000, 0xff0000, 0xFF0000
+};
+
 #define MAIN_LOOP 5
 
 unsigned int milli;
-unsigned int timer_arr_int[3];
+unsigned int timer_arr_int[4];
 
 #define WHITE_TEMP settings[0]
 #define LIGHT_COLOR settings[0]
 #define EFFECT_DELAY settings[0]
 
 #define LIGHT_SAT settings[1]
+#define RAINBOW_STEP settings[1]
+#define HUE_EFFECT settings[1]
+
+
+byte heat[NUM_LEDS + ((NUM_LEDS / 2) / 3 * 2) + 1];
+#define age(x)        (heat[x])
+#define magnitude(x)  (heat[x + (NUM_LEDS / 5)])
+#define baseColor(x)  (heat[x + (NUM_LEDS / 5) * 2])
+#define rnd(x)        (heat[x + (NUM_LEDS / 5) * 3])
+
+byte Rlenght;
 // =====================================================================================================================================================
 
 
